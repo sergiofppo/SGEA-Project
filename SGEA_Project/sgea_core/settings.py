@@ -29,8 +29,8 @@ INSTALLED_APPS = [
     'inicio.apps.InicioConfig',
     'users.apps.UsersConfig',
     'events.apps.EventsConfig',
-    'rest_framework',
-    'audit.apps.AuditConfig',
+    'rest_framework',        # NOVO: Para API REST
+    'audit.apps.AuditConfig',  # NOVO: App de auditoria
 ]
 
 AUTH_USER_MODEL = 'users.Usuario'
@@ -127,12 +127,15 @@ STATICFILES_DIRS = [
 
 LOGIN_URL = 'login'
 
+# CONFIGURAÇÕES DE ARQUIVOS DE MÍDIA
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# CONFIGURAÇÕES DE EMAIL (para desenvolvimento)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 DEFAULT_FROM_EMAIL = 'GoEvents! <noreply@goevents.com>'
 
+# CONFIGURAÇÕES DO DJANGO REST FRAMEWORK
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',

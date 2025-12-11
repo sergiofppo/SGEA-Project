@@ -15,7 +15,7 @@
 
     <main class="container mx-auto p-4 sm:p-6 md:p-8">
         <div class="flex justify-between items-center mb-6 border-b pb-3">
-            <h2 class="text-3xl font-bold" style="color: var(--sgea-blue);">Minhas Inscrições</h2>
+            <h2 class="text-3xl font-bold" style="color: var(--goevents-blue);">Minhas Inscrições</h2>
             <a href="{% url 'events:event_list' %}" class="text-sm font-semibold hover:text-gray-900 transition duration-150">← Voltar para Eventos</a>
         </div>
 
@@ -23,7 +23,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for inscricao in inscricoes_list %}
                     <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-200 flex flex-col">
-                        <h3 class="text-xl font-semibold mb-2" style="color: var(--sgea-blue);">{{ inscricao.evento.nome_evento }}</h3>
+                        <h3 class="text-xl font-semibold mb-2" style="color: var(--goevents-blue);">{{ inscricao.evento.nome_evento }}</h3>
                         <p class="text-gray-500 text-sm mb-4">Apresentador: {{ inscricao.evento.apresentador }}</p>
                         <div class="space-y-1 text-sm text-gray-700 flex-grow">
                             <p><strong>Local:</strong> {{ inscricao.evento.local }}</p>
@@ -41,7 +41,7 @@
                             {% endif %}
                         </div>
                         <div class="mt-4">
-                            <a href="{% url 'events:event_detail' pk=inscricao.evento.pk %}" class="w-full inline-block text-center text-white font-medium py-2 rounded-lg transition duration-200" style="background-color: var(--sgea-blue);" onmouseover="this.style.backgroundColor='#1a256a'" onmouseout="this.style.backgroundColor='var(--sgea-blue)'">
+                            <a href="{% url 'events:event_detail' pk=inscricao.evento.pk %}" class="w-full inline-block text-center text-white font-medium py-2 rounded-lg transition duration-200" style="background-color: var(--goevents-blue);" onmouseover="this.style.backgroundColor='#1a256a'" onmouseout="this.style.backgroundColor='var(--goevents-blue)'">
                                 Ver Detalhes
                             </a>
                         </div>
@@ -52,7 +52,7 @@
             <div class="text-center py-16 bg-white rounded-xl shadow-md">
                 <p class="text-gray-500 text-lg">Você ainda não se inscreveu em nenhum evento.</p>
                 <div class="mt-6">
-                    <a href="{% url 'events:event_list' %}" class="px-6 py-3 text-white font-semibold rounded-lg shadow-md transition duration-200" style="background-color: var(--sgea-blue);" onmouseover="this.style.backgroundColor='#1a256a'" onmouseout="this.style.backgroundColor='var(--sgea-blue)'">
+                    <a href="{% url 'events:event_list' %}" class="px-6 py-3 text-white font-semibold rounded-lg shadow-md transition duration-200" style="background-color: var(--goevents-blue);" onmouseover="this.style.backgroundColor='#1a256a'" onmouseout="this.style.backgroundColor='var(--goevents-blue)'">
                         Ver Eventos Disponíveis
                     </a>
                 </div>

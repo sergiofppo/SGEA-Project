@@ -23,7 +23,7 @@ class EventForm(forms.ModelForm):
             'nome_evento': forms.TextInput(attrs={'placeholder': 'Ex: Semana da Computação'}),
             'apresentador': forms.TextInput(attrs={'placeholder': 'Ex: Dr. Fulano de Tal'}),
             'data': forms.DateInput(attrs={'type': 'date'}),
-            'horario_inicio': forms.TimeInput(attrs={'type': 'time'}), # Alterado
+            'horario_inicio': forms.TimeInput(attrs={'type': 'time'}),
             'horario_fim': forms.TimeInput(attrs={'type': 'time'}),
         }
 

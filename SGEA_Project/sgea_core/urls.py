@@ -10,7 +10,7 @@ urlpatterns = [
     path('auth/', include('users.urls')),
     path('eventos/', include('events.urls')),
     path('api/', include('events.api.urls')),
-    path('audit/', include('audit.urls')),
+    path('audit/', include('audit.urls')),      
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 ]
 
