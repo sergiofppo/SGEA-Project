@@ -7,6 +7,7 @@ from django.db.models import Count, Q
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from audit.utils import log_action
 import io
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -63,7 +64,14 @@ class EventCreateView(LoginRequiredMixin, OrganizadorRequiredMixin, CreateView):
     success_url = reverse_lazy('events:event_list')
     def form_valid(self, form):
         form.instance.organizador_responsavel = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        log_action(
+            user=self.request.user, 
+            action_type='EVENT_CREATE', 
+            details=f"Evento '{self.object.nome_evento}' (ID: {self.object.pk}) criado."
+        )
+        return response
 
 class EventDetailView(LoginRequiredMixin, DetailView):
     model = Evento
@@ -92,8 +100,46 @@ class EventUpdateView(LoginRequiredMixin, OrganizadorRequiredMixin, UpdateView):
     form_class = EventForm
     template_name = 'events/event_form.html'
     success_url = reverse_lazy('events:event_list')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        log_action(
+            user=self.request.user, 
+            action_type='EVENT_UPDATE', 
+            details=f"Evento '{self.object.nome_evento}' (ID: {self.object.pk}) alterado."
+        )
+        return response
+        
     def get_queryset(self):
         return super().get_queryset().filter(organizador_responsavel=self.request.user)
+
+@login_required
+@require_POST
+def delete_event(request, pk):
+    evento = get_object_or_404(Evento, pk=pk)
+    
+    if request.user != evento.organizador_responsavel:
+        messages.error(request, "Você não tem permissão para excluir este evento.")
+        return redirect('events:event_detail', pk=pk)
+
+    try:
+        nome_evento = evento.nome_evento 
+        pk_evento = evento.pk
+        evento.delete()
+        
+        log_action(
+            user=request.user, 
+            action_type='EVENT_DELETE', 
+            details=f"Evento '{nome_evento}' (ID: {pk_evento}) excluído."
+        )
+        
+        messages.success(request, f"Evento '{nome_evento}' excluído com sucesso.")
+        return redirect('events:my_event_list')
+
+    except Exception as e:
+        messages.error(request, f"Erro ao tentar excluir o evento: {e}")
+        return redirect('events:event_detail', pk=pk)
 
 @login_required
 @require_POST
@@ -116,6 +162,12 @@ def enroll_event(request, pk):
     try:
         Inscricao.objects.create(usuario=user, evento=evento)
         messages.success(request, f"Inscrição realizada com sucesso no evento: {evento.nome_evento}!")
+
+        log_action(
+            user=user, 
+            action_type='ENROLL_CREATE', 
+            details=f"Inscrição do usuário {user.username} no evento '{evento.nome_evento}' (ID: {evento.pk})."
+        )
     except Exception as e:
         messages.error(request, f"Ocorreu um erro ao tentar inscrever: {e}")
     return redirect('events:event_detail', pk=pk)
@@ -130,6 +182,13 @@ def emitir_certificado(request, inscricao_id):
         return redirect('events:event_detail', pk=evento.pk)
     inscricao.certificado_emitido = True
     inscricao.save()
+    
+    log_action(
+        user=request.user, 
+        action_type='CERTIFICATE_GENERATE', 
+        details=f"Certificado emitido para {inscricao.usuario.username} no evento '{evento.nome_evento}' (Inscrição ID: {inscricao_id})."
+    )
+
     messages.success(request, f"Certificado para {inscricao.usuario.username} emitido com sucesso!")
     return redirect('events:event_detail', pk=evento.pk)
 
@@ -143,6 +202,12 @@ def generate_certificate_pdf(request, inscricao_id):
     if request.user != inscricao.usuario and request.user != inscricao.evento.organizador_responsavel:
         messages.error(request, "Você não tem permissão para baixar este certificado.")
         return redirect('events:my_inscriptions')
+    
+    log_action(
+        user=request.user, 
+        action_type='CERTIFICATE_VIEW', 
+        details=f"Certificado consultado por {request.user.username} para a inscrição ID: {inscricao_id}."
+    )
 
     buffer = io.BytesIO()
     p = canvas.Canvas(buffer, pagesize=letter)
@@ -174,10 +239,8 @@ def generate_certificate_pdf(request, inscricao_id):
     )
 
     try:
-        # Define o locale para Português do Brasil para formatar o mês
         locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
     except locale.Error:
-        # Fallback caso o locale não esteja instalado no sistema
         locale.setlocale(locale.LC_TIME, '')
 
     aluno_nome = inscricao.usuario.get_full_name() or inscricao.usuario.username
@@ -199,7 +262,7 @@ def generate_certificate_pdf(request, inscricao_id):
     p.setFont("Helvetica-Oblique", 12)
     p.drawCentredString(width / 2.0, 2 * inch, "_________________________")
     p.setFont("Helvetica-Bold", 12)
-    p.drawCentredString(width / 2.0, 1.8 * inch, "SGEA - Organização de Eventos")
+    p.drawCentredString(width / 2.0, 1.8 * inch, "GoEvents! - Organização de Eventos")
 
     p.setFont("Helvetica", 9)
     p.setFillColor(colors.grey)

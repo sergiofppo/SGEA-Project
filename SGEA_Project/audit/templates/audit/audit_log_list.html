@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoEvents! - Registros de Auditoria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    {% include 'inicio/partials/header.html' %}
+
+    <main class="container mx-auto p-4 sm:p-6 md:p-8">
+        <h2 class="text-3xl font-bold mb-6 border-b pb-3" style="color: var(--goevents-blue);">
+            Registros de Auditoria
+        </h2>
+        
+        {% if messages %}{% for message in messages %}<p class="errorlist">{{ message }}</p>{% endfor %}{% endif %}
+
+        <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+            <form method="get" action="{% url 'audit:audit_log_list' %}" class="flex flex-wrap items-end space-x-4">
+                
+                <div class="flex-grow min-w-[200px]">
+                    <label for="id_date" class="block text-sm font-medium text-gray-700 mb-1">Filtrar por Data</label>
+                    <input type="date" id="id_date" name="date" value="{{ current_date }}" class="w-full p-2 border border-gray-300 rounded-lg">
+                </div>
+
+                <div class="flex-grow min-w-[200px]">
+                    <label for="id_user" class="block text-sm font-medium text-gray-700 mb-1">Filtrar por Usuário</label>
+                    <select id="id_user" name="user" class="w-full p-2 border border-gray-300 rounded-lg">
+                        <option value="">-- Todos os Usuários --</option>
+                        {% for user_obj in all_users %}
+                            <option value="{{ user_obj.username }}" {% if current_user == user_obj.username %}selected{% endif %}>
+                                {{ user_obj.get_full_name|default:user_obj.username }} ({{ user_obj.perfil }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="mt-4 md:mt-0 px-4 py-2 text-white font-semibold rounded-lg shadow-md transition duration-200" style="background-color: var(--goevents-blue);" onmouseover="this.style.backgroundColor='#1a256a'" onmouseout="this.style.backgroundColor='var(--goevents-blue)'">
+                    Aplicar Filtro
+                </button>
+            </form>
+        </div>
+
+        {% if logs %}
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data/Hora</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuário</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ação</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalhes</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for log in logs %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ log.timestamp|date:"d/m/Y H:i" }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ log.user.get_full_name|default:log.user.username }} 
+                                    <span class="text-xs text-gray-500">({{ log.user.perfil }})</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ log.get_action_display }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ log.details|default:"N/A" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if is_paginated %}
+                <div class="mt-4 flex justify-center">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" class="mx-1 px-3 py-2 bg-gray-200 rounded">Anterior</a>
+                    {% endif %}
+                    <span class="mx-1 px-3 py-2 bg-gray-100 rounded">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="mx-1 px-3 py-2 bg-gray-200 rounded">Próxima</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+        {% else %}
+            <div class="text-center py-12 bg-white rounded-xl shadow-md">
+                <p class="text-gray-500 text-lg">Nenhum registro de auditoria encontrado com os filtros aplicados.</p>
+            </div>
+        {% endif %}
+    </main>
+
+    {% include 'inicio/partials/footer.html' %}
+</body>
+</html>

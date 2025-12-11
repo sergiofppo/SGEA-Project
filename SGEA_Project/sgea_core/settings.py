@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'inicio.apps.InicioConfig',
     'users.apps.UsersConfig',
     'events.apps.EventsConfig',
+    'rest_framework',
+    'audit.apps.AuditConfig',
 ]
 
 AUTH_USER_MODEL = 'users.Usuario'
@@ -125,3 +127,28 @@ STATICFILES_DIRS = [
 
 LOGIN_URL = 'login'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
+DEFAULT_FROM_EMAIL = 'GoEvents! <noreply@goevents.com>'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    
+    'DEFAULT_THROTTLE_RATES': {
+        'events.list': '20/day', 
+        'events.enroll': '50/day', 
+    }
+}

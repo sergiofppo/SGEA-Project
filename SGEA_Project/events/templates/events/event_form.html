@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGEA - Formulário de Evento</title>
+    <title>GoEvents! - Formulário de Evento</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
@@ -18,7 +18,7 @@
                 <h2 class="text-3xl font-bold text-gray-800">Dados do Evento</h2>
                 <a href="{% url 'events:event_list' %}" class="text-sm text-indigo-600 hover:text-indigo-800">← Voltar para Eventos</a>
             </div>
-            <form method="post" class="space-y-6">
+            <form method="post" class="space-y-6" enctype="multipart/form-data"> 
                 {% csrf_token %}
                 {% if form.non_field_errors %}<div class="errorlist">{{ form.non_field_errors }}</div>{% endif %}
                 <div class="grid md:grid-cols-2 gap-6">
@@ -30,6 +30,12 @@
                     <div><label for="{{ form.horario_inicio.id_for_label }}" class="block text-sm font-medium text-gray-700">Horário de Início</label>{{ form.horario_inicio }}{% if form.horario_inicio.errors %}<div class="error-text">{{ form.horario_inicio.errors }}</div>{% endif %}</div>
                     <div><label for="{{ form.horario_fim.id_for_label }}" class="block text-sm font-medium text-gray-700">Horário de Fim</label>{{ form.horario_fim }}{% if form.horario_fim.errors %}<div class="error-text">{{ form.horario_fim.errors }}</div>{% endif %}</div>
                     <div class="md:col-span-2"><label for="{{ form.local.id_for_label }}" class="block text-sm font-medium text-gray-700">Local</label>{{ form.local }}{% if form.local.errors %}<div class="error-text">{{ form.local.errors }}</div>{% endif %}</div>
+                    <div class="md:col-span-2">
+                        <label for="{{ form.banner.id_for_label }}" class="block text-sm font-medium text-gray-700">Banner do Evento (Opcional)</label>
+                        {{ form.banner }}
+                        {% if form.banner.errors %}<div class="error-text">{{ form.banner.errors }}</div>{% endif %}
+                        <p class="text-xs text-gray-500 mt-1">Formatos aceitos: Imagem (JPEG, PNG). Tamanho máximo: 5MB.</p>
+                    </div>
                 </div>
                 <button type="submit" class="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">Salvar Evento</button>
             </form>

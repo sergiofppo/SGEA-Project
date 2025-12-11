@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import Usuario
+from django.conf import settings
 
 class Evento(models.Model):
     TIPO_CHOICES = (
@@ -17,6 +18,13 @@ class Evento(models.Model):
     horario_fim = models.TimeField()
     local = models.CharField(max_length=255)
     qtd_participantes = models.IntegerField(default=0)
+
+    banner = models.ImageField(
+        upload_to='event_banners/',  
+        null=True,                  
+        blank=True,                
+        help_text="Upload de uma imagem para o banner do evento."
+    )
     
     organizador_responsavel = models.ForeignKey(
         Usuario, 

@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
 :root {
-    --sgea-blue: #1E2A78;
-    --sgea-gold: #E4B74C;
-    --sgea-light-gray: #f8fafc;
+    --goevents-blue: #1E2A78;
+    --goevents-gold: #E4B74C;   
+    --goevents-light-gray: #f8fafc; 
 }
 
 html { 
@@ -19,7 +19,7 @@ body {
     padding: 0;
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
-    background-color: var(--sgea-light-gray); 
+    background-color: var(--goevents-light-gray); 
 }
 
 main { 
@@ -27,7 +27,7 @@ main {
 }
 
 .btn-primary {
-    background-color: var(--sgea-blue);
+    background-color: var(--goevents-blue); 
     color: white;
 }
 .btn-primary:hover {
@@ -35,15 +35,15 @@ main {
 }
 
 h1, h2, h3, .text-primary {
-    color: var(--sgea-blue);
+    color: var(--goevents-blue); 
 }
 
 a {
-    color: var(--sgea-blue);
+    color: var(--goevents-blue); 
     transition: color 0.2s;
 }
 a:hover {
-    color: var(--sgea-gold);
+    color: var(--goevents-gold); 
 }
 
 .errorlist { list-style: none; padding: 0; margin: 8px 0; }
@@ -72,5 +72,5 @@ input[type="number"]:focus,
 input[type="date"]:focus,
 input[type="time"]:focus,
 select:focus {
-    box-shadow: 0 0 0 2px var(--sgea-gold);
+    box-shadow: 0 0 0 2px var(--goevents-gold); 
 }

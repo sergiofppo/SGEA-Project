@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGEA - Eventos</title>
+    <title>GoEvents! - Eventos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
@@ -20,10 +20,10 @@
                     <div class="flex space-x-2">
                         <a href="{% url 'events:my_inscriptions' %}" class="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg text-sm font-semibold hover:bg-gray-100 transition duration-150">Minhas Inscrições</a>
                         <a href="{% url 'events:my_event_list' %}" class="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg text-sm font-semibold hover:bg-gray-100 transition duration-150">Meus Eventos</a>
-                        <a href="{% url 'events:event_create' %}" class="px-4 py-2 text-white rounded-lg text-sm font-semibold transition duration-150" style="background-color: var(--sgea-blue);" onmouseover="this.style.backgroundColor='#1a256a'" onmouseout="this.style.backgroundColor='var(--sgea-blue)'">Criar Evento</a>
+                        <a href="{% url 'events:event_create' %}" class="px-4 py-2 text-white rounded-lg text-sm font-semibold transition duration-150" style="background-color: var(--goevents-blue);" onmouseover="this.style.backgroundColor='#1a256a'" onmouseout="this.style.backgroundColor='var(--goevents-blue)'">Criar Evento</a>
                     </div>
                 {% elif user.perfil == 'ALUNO' or user.perfil == 'PROFESSOR' %}
-                    <a href="{% url 'events:my_inscriptions' %}" class="px-4 py-2 text-white rounded-lg text-sm font-semibold transition duration-150" style="background-color: var(--sgea-blue);" onmouseover="this.style.backgroundColor='#1a256a'" onmouseout="this.style.backgroundColor='var(--sgea-blue)'">Minhas Inscrições</a>
+                    <a href="{% url 'events:my_inscriptions' %}" class="px-4 py-2 text-white rounded-lg text-sm font-semibold transition duration-150" style="background-color: var(--goevents-blue);" onmouseover="this.style.backgroundColor='#1a256a'" onmouseout="this.style.backgroundColor='var(--goevents-blue)'">Minhas Inscrições</a>
                 {% endif %}
             {% endif %}
         </div>

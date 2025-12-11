@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+import uuid
 
 class Usuario(AbstractUser):
     telefone = models.CharField(max_length=15, verbose_name='Telefone', blank=True, null=True)
@@ -23,6 +24,13 @@ class Usuario(AbstractUser):
     )
     
     data_registro = models.DateTimeField(auto_now_add=True)
+    email_confirm_token = models.CharField(max_length=100, default=uuid.uuid4)
+
+    is_active = models.BooleanField(
+        default=False, 
+        help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', 
+        verbose_name='active'
+    )
 
     class Meta:
         verbose_name = 'Usuário'
