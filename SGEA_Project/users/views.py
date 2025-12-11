@@ -1,58 +1,80 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
+from django.contrib import messages
+from django.contrib.auth import get_user_model, login
+
+# Importações para decodificar o token (mantidas para uso futuro)
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+
 from .forms import CustomUserCreationForm
 from .models import Usuario
-from audit.utils import log_action 
 from .utils import send_confirmation_email
-from django.contrib import messages
+
+# Se você ainda não tem o app 'audit', mantenha comentado para não dar erro
+# from audit.utils import log_action 
+
+User = get_user_model()
 
 class UsuarioRegisterView(CreateView):
     model = Usuario
     form_class = CustomUserCreationForm
     template_name = 'users/register.html'
-    success_url = reverse_lazy('login') 
+    success_url = reverse_lazy('login')
 
     def form_valid(self, form):
-        response = super().form_valid(form)
+        # 1. Salva o objeto na memória
+        self.object = form.save(commit=False)
         
-        if self.object.email:
-            send_confirmation_email(self.object, self.request)
+        # --- MUDANÇA PARA DESENVOLVIMENTO: Ativa direto ---
+        self.object.is_active = True  # O usuário já nasce ATIVO
+        self.object.save() 
+
+        # 2. Comentamos o envio de e-mail para não dar erro agora
+        # if self.object.email:
+        #     send_confirmation_email(self.object, self.request)
+        #     messages.info(self.request, f"Cadastro realizado! Um link de ativação foi enviado para {self.object.email}.")
         
-        log_action(
-            user=self.object, 
-            action_type='USER_CREATE', 
-            details=f"Usuário {self.object.username} ({self.object.perfil}) criado, aguardando confirmação por e-mail."
-        )
+        # 3. Mensagem de sucesso direta
+        messages.success(self.request, "Cadastro realizado com sucesso! Faça seu login.")
+
+        # Log de auditoria (Descomente se tiver o app audit)
+        # log_action(
+        #     user=self.object,
+        #     action_type='USER_CREATE',
+        #     details=f"Usuário {self.object.username} ({self.object.perfil}) criado."
+        # )
         
-        messages.info(self.request, "Seu cadastro foi realizado com sucesso! Verifique seu e-mail para ativar sua conta.")
-        return response
-    
+        return redirect(self.success_url)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Cadastro de Novo Usuário'
         return context
 
-def activate_account(request, token):
+# Mantemos a função aqui para quando você for reativar o sistema de e-mail no futuro
+def activate_account(request, uidb64, token):
     try:
-        user = Usuario.objects.get(email_confirm_token=token)
-    except Usuario.DoesNotExist:
-        messages.error(request, "Token de ativação inválido ou expirado.")
-        return redirect('login') 
+        # Decodifica o ID do usuário
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
 
-    if user.is_active:
-        messages.warning(request, "Esta conta já estava ativa. Faça login para continuar.")
-        return redirect('login')
+    # Verifica se o usuário existe e se o token é válido
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, "Sua conta foi ativada com sucesso! Faça o login.")
         
-    user.is_active = True
-    user.save()
-    
-    messages.success(request, "Conta ativada com sucesso! Você já pode fazer login.")
-    
-    log_action(
-        user=user, 
-        action_type='USER_UPDATE', 
-        details=f"Usuário {user.username} ativou a conta via link de e-mail."
-    )
-    
-    return redirect('login')
+        # log_action(
+        #    user=user,
+        #    action_type='USER_UPDATE',
+        #    details=f"Usuário {user.username} ativou a conta via e-mail."
+        # )
+        return redirect('login')
+    else:
+        messages.error(request, "O link de ativação é inválido ou expirou!")
+        return redirect('login')

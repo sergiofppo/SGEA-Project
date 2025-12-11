@@ -4,7 +4,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -26,13 +25,24 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # --- NECESSÁRIO PARA O FRAMEWORK DE SITES (DOMÍNIO) ---
+    'django.contrib.sites', 
+    
+    # Seus Apps
     'inicio.apps.InicioConfig',
     'users.apps.UsersConfig',
     'events.apps.EventsConfig',
-    'rest_framework',        # NOVO: Para API REST
-    'audit.apps.AuditConfig',  # NOVO: App de auditoria
+    'audit.apps.AuditConfig',
+    
+    # Terceiros
+    'rest_framework',
 ]
 
+# ID do site atual (1 = localhost configurado no banco)
+SITE_ID = 1
+
+# Define que o modelo de usuário é o personalizado
 AUTH_USER_MODEL = 'users.Usuario'
 
 MIDDLEWARE = [
@@ -50,7 +60,7 @@ ROOT_URLCONF = 'sgea_core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [], # O Django já procura dentro das pastas 'templates' de cada app (APP_DIRS=True)
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -100,7 +110,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+# Alterado para o horário de Brasília para os logs ficarem corretos
+TIME_ZONE = 'America/Sao_Paulo' 
 
 USE_I18N = True
 
@@ -112,30 +123,39 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-
-STATIC_URL = 'static/'
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'sgea_core', 'static'),
 ]
 
-LOGIN_URL = 'login'
-
-# CONFIGURAÇÕES DE ARQUIVOS DE MÍDIA
+# Configurações de Mídia (Uploads de usuários)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# CONFIGURAÇÕES DE EMAIL (para desenvolvimento)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# --- CONFIGURAÇÕES DE AUTENTICAÇÃO E LOGIN ---
+
+# URL para onde o usuário é enviado se tentar acessar uma página restrita sem estar logado
+LOGIN_URL = 'login'
+
+# URL para onde o usuário vai após fazer login com sucesso
+LOGIN_REDIRECT_URL = '/eventos/' 
+
+# URL para onde o usuário vai após fazer logout (vai para a home)
+LOGOUT_REDIRECT_URL = '/'
+
+
+# --- CONFIGURAÇÕES DE EMAIL (FILEBASED - ARQUIVO) ---
+# Isso salva o e-mail numa pasta 'emails_enviados' na raiz do projeto
+# Resolve o problema do link quebrando no terminal
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails_enviados')
 DEFAULT_FROM_EMAIL = 'GoEvents! <noreply@goevents.com>'
 
-# CONFIGURAÇÕES DO DJANGO REST FRAMEWORK
+
+# --- CONFIGURAÇÕES DO DJANGO REST FRAMEWORK ---
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',

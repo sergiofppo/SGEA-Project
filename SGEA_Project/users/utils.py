@@ -1,30 +1,28 @@
-from django.core.mail import EmailMultiAlternatives
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.conf import settings
+from django.core.mail import EmailMessage
 from django.urls import reverse
 
 def send_confirmation_email(user, request):
-    subject = 'GoEvents! - Confirmação de Cadastro'
-    activation_link = request.build_absolute_uri(
-        reverse('activate_account', kwargs={'token': str(user.email_confirm_token)})
+    current_site = get_current_site(request)
+    mail_subject = 'Ative sua conta no GoEvents!'
+    
+    # Gera o UID (ID do usuário criptografado) e o Token
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    
+    # Monta o link de ativação
+    link = reverse('activate', kwargs={'uidb64': uid, 'token': token})
+    activate_url = f"http://{current_site.domain}{link}"
+    
+    message = f"Olá {user.username},\n\nPor favor, clique no link abaixo para ativar sua conta:\n{activate_url}\n\nObrigado!"
+    
+    email = EmailMessage(
+        mail_subject,
+        message,
+        to=[user.email]
     )
-    
-    context = {
-        'user': user,
-        'activation_link': activation_link,
-        'domain': request.get_host(),
-        'protocol': request.scheme,
-    }
-    
-    html_content = render_to_string('users/email/activation_email.html', context)
-    text_content = strip_tags(html_content)
-    msg = EmailMultiAlternatives(subject, text_content, settings.DEFAULT_FROM_EMAIL, [user.email])
-    msg.attach_alternative(html_content, "text/html")
-    
-    try:
-        msg.send()
-        return True
-    except Exception as e:
-        print(f"Erro ao enviar email para {user.email}: {e}")
-        return False
+    email.send()

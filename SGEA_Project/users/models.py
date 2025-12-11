@@ -1,9 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-import uuid
 
 class Usuario(AbstractUser):
-    telefone = models.CharField(max_length=15, verbose_name='Telefone', blank=True, null=True)
+    telefone = models.CharField(
+        max_length=15, 
+        verbose_name='Telefone', 
+        blank=True, 
+        null=True
+    )
+    
     instituicao_ensino = models.CharField(
         max_length=100, 
         verbose_name='Instituição de Ensino', 
@@ -16,6 +21,7 @@ class Usuario(AbstractUser):
         ('PROFESSOR', 'Professor'),
         ('ORGANIZADOR', 'Organizador'),
     )
+    
     perfil = models.CharField(
         max_length=15,
         choices=PERFIL_CHOICES,
@@ -24,12 +30,16 @@ class Usuario(AbstractUser):
     )
     
     data_registro = models.DateTimeField(auto_now_add=True)
-    email_confirm_token = models.CharField(max_length=100, default=uuid.uuid4)
+    
+    # Campo para armazenar o token de confirmação de e-mail
+    # Deixamos null=True para evitar erros ao criar superusuários via terminal
+    email_confirm_token = models.CharField(max_length=100, blank=True, null=True)
 
+    # Sobrescrevemos o is_active para nascer False (inativo) até confirmar o e-mail
     is_active = models.BooleanField(
         default=False, 
-        help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', 
-        verbose_name='active'
+        help_text='Indica se o usuário deve ser tratado como ativo. Desmarque isso em vez de excluir contas.', 
+        verbose_name='ativo'
     )
 
     class Meta:

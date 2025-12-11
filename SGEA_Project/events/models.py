@@ -43,6 +43,8 @@ class Inscricao(models.Model):
     
     class Meta:
         unique_together = ('usuario', 'evento')
+        verbose_name = "Inscrição"
+        verbose_name_plural = "Inscrições"
 
     def __str__(self):
-        return f"Inscrição de {self.usuario.username} em {self.evento.tipo_evento}"
+        return f"Inscrição de {self.usuario.username} em {self.evento.nome_evento}"
