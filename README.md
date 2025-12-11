@@ -1,7 +1,5 @@
 # GoEvents! - Sistema de Gestão de Eventos Acadêmicos
 
-![GoEvents! Logo](LINK_PARA_A_NOVA_LOGO) 
-
 O GoEvents! é um sistema web completo desenvolvido em Django para o gerenciamento de eventos acadêmicos, como seminários, palestras e minicursos. O projeto foi expandido para incluir autenticação robusta, APIs REST e auditoria de ações.
 
 ## ✨ Funcionalidades Principais (Fase 2 Implementada)
