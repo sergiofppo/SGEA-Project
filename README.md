@@ -26,14 +26,14 @@ O GoEvents! é um sistema web completo desenvolvido em Django para o gerenciamen
 * **Banco de Dados:** SQLite 3 (padrão do Django para desenvolvimento).
 * **Geração de PDF:** Biblioteca `reportlab` com `Pillow`.
 
-## ⚙️ Guia de Instalação e Testes (Guia de Testes/Instalação - Item 5)
+## ⚙️ Guia de Instalação e Testes (Guia de Testes/Instalação)
 
 Siga os passos abaixo para rodar o projeto em seu ambiente de desenvolvimento.
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/miguellferraz/GoEvents-Project](https://github.com/miguellferraz/GoEvents-Project)
-    cd GoEvents-Project/SGEA_Project
+    git clone https://github.com/miguellferraz/SGEA-Project
+    cd SGEA_Project
     ```
 
 2.  **Crie e ative um ambiente virtual:**
