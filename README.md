@@ -32,7 +32,7 @@ Siga os passos abaixo para rodar o projeto em seu ambiente de desenvolvimento.
 
 1.  **Clone o repositório:**
     ```bash
-    git clone https://github.com/miguellferraz/SGEA-Project
+    git clone https://github.com/sergiofppo/SGEA-Project
     cd SGEA_Project
     ```
 
