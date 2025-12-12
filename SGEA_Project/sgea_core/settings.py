@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-ngy@4#j42tsgv9pu&@mgddf9b-3b5(j75tnr6ny3$^3pa*pmc!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -25,18 +25,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
-    # --- NECESSÁRIO PARA O FRAMEWORK DE SITES (DOMÍNIO) ---
     'django.contrib.sites', 
-    
-    # Seus Apps
     'inicio.apps.InicioConfig',
     'users.apps.UsersConfig',
     'events.apps.EventsConfig',
     'audit.apps.AuditConfig',
-    
-    # Terceiros
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 # ID do site atual (1 = localhost configurado no banco)
